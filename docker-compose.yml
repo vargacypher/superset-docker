@@ -11,12 +11,12 @@ services:
       - postgres:/var/lib/postgresql/data
     network_mode: host
 
-  # redis:
-  #   image: redis
-  #   restart: always
-  #   network_mode: host
-  #   volumes:
-  #     - redis:/data
+  redis:
+    image: redis
+    restart: always
+    network_mode: host
+    volumes:
+      - redis:/data
 
   superset:
     build: . 
@@ -60,4 +60,4 @@ services:
 
 volumes:
   postgres:
-  #redis:
+  redis:
