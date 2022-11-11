@@ -60,4 +60,4 @@ services:
 
 volumes:
   postgres:
-  redis:
+  #redis:
