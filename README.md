@@ -1,1 +1,3 @@
-# superset-docker
+# Superset-docker
+
+Docker compose for Superset
