@@ -1,0 +1,63 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: superset
+      POSTGRES_PASSWORD: superset
+      POSTGRES_USER: superset
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    network_mode: host
+
+  # redis:
+  #   image: redis
+  #   restart: always
+  #   network_mode: host
+  #   volumes:
+  #     - redis:/data
+
+  superset:
+    build: . 
+    restart: always
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./superset_config.py:/etc/superset/superset_config.py
+    network_mode: host
+
+  superset-create-admin:
+    restart: on-failure:2
+    build: . 
+    depends_on:
+      - superset
+    volumes:
+      - ./superset_config.py:/etc/superset/superset_config.py
+    network_mode: host
+    command: "superset superset fab create-admin --username admin --firstname Superset  --lastname Admin --email admin@superset.com --password admin"
+    
+  superset-upgrade:
+    restart: on-failure:2
+    build: . 
+    depends_on:
+      - superset-create-admin
+    volumes:
+      - ./superset_config.py:/etc/superset/superset_config.py
+    network_mode: host
+    command: "superset superset db upgrade"
+  
+  superset-init:
+    restart: on-failure:2
+    build: . 
+    depends_on:
+      - superset-upgrade
+    volumes:
+      - ./superset_config.py:/etc/superset/superset_config.py
+    network_mode: host
+    command: "superset superset init"
+
+volumes:
+  postgres:
+  redis:
